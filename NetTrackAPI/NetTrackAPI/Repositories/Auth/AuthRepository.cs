@@ -12,7 +12,7 @@ namespace NetTrackAPI.Repositories.Auth
         {
             this._userManager = userManager;
         }
-        public Task<User> Create([FromBody] JsonUser user)
+        public Task<User> Create([FromBody] User user)
         {
             Console.WriteLine(user);
             //var flag = _userManager.CreateAsync(user, user.Password);

@@ -50,7 +50,118 @@ namespace NetTrackAPI.Models
         [Required]
         public string Eye { get; set; }
 
+        //public virtual TKey Id
+        //{
+        //    get;
+        //    set;
+        //}
 
+        [JsonIgnore]
+        [ProtectedPersonalData]
+        public virtual string UserName
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        public virtual string NormalizedUserName
+        {
+            get;
+            set;
+        }
+
+        //[JsonIgnore]
+        //public virtual string Email
+        //{
+        //    get;
+        //    set;
+        //}
+
+        [JsonIgnore]
+        public virtual string NormalizedEmail
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        [PersonalData]
+        public virtual bool EmailConfirmed
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        public virtual string PasswordHash
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        string SecurityStamp
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        public virtual string ConcurrencyStamp
+        {
+            get;
+            set;
+        } = Guid.NewGuid().ToString();
+
+
+        [JsonIgnore]
+        [ProtectedPersonalData]
+        public virtual string PhoneNumber
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        [PersonalData]
+        public virtual bool PhoneNumberConfirmed
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        [PersonalData]
+        public virtual bool TwoFactorEnabled
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        public virtual DateTimeOffset? LockoutEnd
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        public virtual bool LockoutEnabled
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore]
+        public virtual int AccessFailedCount
+        {
+            get;
+            set;
+        }
+
+
+        [Required]
         public List<Contact> contacts { get; set; }
 
     }

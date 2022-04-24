@@ -64,10 +64,10 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 app.MapPost("/register", 
-    (JsonUser user, IAuthRepository repo) => Create(user, repo));
+    (User user, IAuthRepository repo) => Create(user, repo));
 
 
-IResult Create(JsonUser user, IAuthRepository repo)
+IResult Create(User user, IAuthRepository repo)
 {
     var result = repo.Create(user);
     return Results.Ok(result);
