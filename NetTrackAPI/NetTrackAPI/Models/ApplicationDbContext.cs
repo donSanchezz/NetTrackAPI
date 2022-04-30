@@ -12,6 +12,9 @@ namespace NetTrackAPI.Models
 
         }
 
+
+        public DbSet<Contact> Contact { get; set; }
+
         
     }
 }

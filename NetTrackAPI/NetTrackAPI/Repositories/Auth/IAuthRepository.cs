@@ -1,12 +1,13 @@
 ﻿using NetTrackAPI.Models;
+using NetTrackAPI.ViewModels;
 
 namespace NetTrackAPI.Repositories.Auth
 {
     public interface IAuthRepository
     {
         
-        Task<User> Create(User user);
+        Task<UserModel> Create(UserModel user);
 
-        Task<User> Login(string email, string password);
+        Task<UserModel> Login(LoginModel details);
     }
 }

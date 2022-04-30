@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using NetTrackAPI.Repositories.Auth;
+using NetTrackAPI.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,7 @@ builder.Services.Configure<JsonOptions>(options =>
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddCors(opts => opts.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-builder.Services.AddIdentityCore<User>(
+builder.Services.AddIdentity<User, IdentityRole>(
 
     opt =>
     {
@@ -64,13 +65,33 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 app.MapPost("/register", 
-    (User user, IAuthRepository repo) => Create(user, repo));
+    (UserModel user, IAuthRepository repo) => Create(user, repo));
+
+app.MapPost("/login",
+    (LoginModel details, IAuthRepository repo) => Login(details, repo));
 
 
-IResult Create(User user, IAuthRepository repo)
+
+
+
+IResult Create(UserModel user, IAuthRepository repo)
 {
     var result = repo.Create(user);
-    return Results.Ok(result);
+    if (result.Result == null)
+    {
+        return Results.NoContent();
+    }
+    return Results.Ok(result.Result);
+}
+
+IResult Login(LoginModel details, IAuthRepository repo)
+{
+    var result = repo.Login(details);
+    if (result.Result == null)
+    {
+        return Results.NoContent();
+    }
+    return Results.Ok(result.Result);
 }
 
 app.Run();
