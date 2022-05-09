@@ -24,6 +24,7 @@ namespace NetTrackAPI.Models
         public string Eye { get; set; }
 
         public List<Contact> contacts { get; set; }
+        public List<Alert> alerts { get; set; }
 
     }
 }

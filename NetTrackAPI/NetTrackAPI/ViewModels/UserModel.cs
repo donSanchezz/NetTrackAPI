@@ -6,6 +6,8 @@ namespace NetTrackAPI.ViewModels
 {
     public class UserModel
     {
+        public string Id { get; set; }
+        
         [Required]
         [JsonPropertyName("fname")]
         public string FirstName { get; set; }

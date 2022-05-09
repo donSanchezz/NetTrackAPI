@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using NetTrackAPI.Repositories.Auth;
 using NetTrackAPI.ViewModels;
+using NetTrackAPI.Repositories.Alert;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<FormOptions>(options => options.KeyLengthLimit = int.MaxValue);
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -20,6 +23,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAlertRepository, AlertRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddCors(opts => opts.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddIdentity<User, IdentityRole>(
@@ -71,6 +75,13 @@ app.MapPost("/login",
     (LoginModel details, IAuthRepository repo) => Login(details, repo));
 
 
+app.MapPost("/alert",
+    (HttpRequest httpRequest, IAlertRepository repo) => Trigger(httpRequest, repo));
+
+app.MapPost("/image",
+    (HttpRequest httpRequest, IAlertRepository repo) => Upload(httpRequest, repo));
+
+
 
 
 
@@ -92,6 +103,22 @@ IResult Login(LoginModel details, IAuthRepository repo)
         return Results.NoContent();
     }
     return Results.Ok(result.Result);
+}
+
+IResult Trigger(HttpRequest httpRequest, IAlertRepository repo)
+{
+   
+
+    var result = repo.Start(httpRequest);
+    return Results.Ok();
+}
+
+IResult Upload(HttpRequest httpRequest, IAlertRepository repo)
+{
+
+
+    var result = repo.SaveImage(httpRequest);
+    return Results.Ok();
 }
 
 app.Run();
