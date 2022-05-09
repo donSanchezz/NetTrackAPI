@@ -5,7 +5,6 @@ project.lock.json
 *.pyc
 nupkg/
 Images
-appsettings.json
 
 # Visual Studio Code
 .vscode
