@@ -63,7 +63,7 @@ namespace NetTrackAPI.Repositories.Auth
             if (result.Succeeded)
             {
                 var contacts = _context.Contact.Where(c => c.UserId == user.Id).ToList();
-                return new UserModel { Email = user.Email, FirstName = user.FirstName, LastName = user.LastName, Phonenumber = user.PhoneNumber, contacts = contacts, Body = user.Body, Skin = user.Skin, Day = user.Day, Month = user.Month, Year = user.Year, Eye = user.Eye };
+                return new UserModel { Id = user.Id, Email = user.Email, FirstName = user.FirstName, LastName = user.LastName, Phonenumber = user.PhoneNumber, contacts = contacts, Body = user.Body, Skin = user.Skin, Day = user.Day, Month = user.Month, Year = user.Year, Eye = user.Eye };
             }
             return null;
         }

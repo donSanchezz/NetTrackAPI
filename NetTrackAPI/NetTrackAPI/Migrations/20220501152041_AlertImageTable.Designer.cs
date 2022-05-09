@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTrackAPI.Models;
 
@@ -11,9 +12,10 @@ using NetTrackAPI.Models;
 namespace NetTrackAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220501152041_AlertImageTable")]
+    partial class AlertImageTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,18 +165,15 @@ namespace NetTrackAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
+                    b.Property<int>("Latitude")
+                        .HasColumnType("int");
 
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
+                    b.Property<int>("Longitude")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("status")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

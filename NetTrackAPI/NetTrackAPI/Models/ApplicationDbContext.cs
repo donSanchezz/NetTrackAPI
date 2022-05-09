@@ -14,6 +14,8 @@ namespace NetTrackAPI.Models
 
 
         public DbSet<Contact> Contact { get; set; }
+        public DbSet<Alert> Alert { get; set; }
+        public DbSet<Image> Image { get; set; }
 
         
     }
