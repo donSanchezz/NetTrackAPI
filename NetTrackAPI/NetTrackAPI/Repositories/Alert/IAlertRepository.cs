@@ -6,5 +6,9 @@ namespace NetTrackAPI.Repositories.Alert
     {
         Task Start(HttpRequest request);
         Task SaveImage(HttpRequest request);
+        Task<Models.Alert> GetAlert(string userId);
+        Task UpdateAlert(HttpRequest request);
+
+        Task StopAlert(HttpRequest request);
     }
 }
