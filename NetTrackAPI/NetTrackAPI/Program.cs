@@ -9,11 +9,13 @@ using NetTrackAPI.Repositories.Auth;
 using NetTrackAPI.ViewModels;
 using NetTrackAPI.Repositories.Alert;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddDirectoryBrowser();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<FormOptions>(options => options.KeyLengthLimit = int.MaxValue);
 builder.Services.AddSwaggerGen();
@@ -57,6 +59,7 @@ builder.Services.AddAuthentication(cfg =>
         ClockSkew = TimeSpan.Zero
     };
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,6 +67,21 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseStaticFiles();
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+        RequestPath = "/Images"
+    });
+
+    app.UseDirectoryBrowser(new DirectoryBrowserOptions
+    {
+        FileProvider = new PhysicalFileProvider(
+                  Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+        RequestPath = "/Images"
+    });
 }
 
 //app.UseHttpsRedirection();
@@ -78,12 +96,19 @@ app.MapPost("/login",
 app.MapPost("/alert",
     (HttpRequest httpRequest, IAlertRepository repo) => Trigger(httpRequest, repo));
 
+
+app.MapGet("/alert",
+    (string userId, IAlertRepository repo) => GetAlert(userId, repo));
+
 app.MapPost("/image",
     (HttpRequest httpRequest, IAlertRepository repo) => Upload(httpRequest, repo));
 
+app.MapPost("/updatealert",
+    (HttpRequest httpRequest, IAlertRepository repo) => UpdateAlert(httpRequest, repo));
 
 
-
+app.MapPost("/stopalert",
+    (HttpRequest httpRequest, IAlertRepository repo) => StopAlert(httpRequest, repo));
 
 IResult Create(UserModel user, IAuthRepository repo)
 {
@@ -113,6 +138,30 @@ IResult Trigger(HttpRequest httpRequest, IAlertRepository repo)
     return Results.Ok();
 }
 
+IResult GetAlert(string userId, IAlertRepository repo)
+{
+    var result = repo.GetAlert(userId);
+    if (result.Result == null)
+    {
+        return Results.NoContent();
+    }
+    return Results.Ok(result.Result);
+}
+
+IResult StopAlert(HttpRequest httpRequest, IAlertRepository repo)
+{
+    var result = repo.StopAlert(httpRequest);
+    return Results.Ok();
+}
+
+IResult UpdateAlert(HttpRequest httpRequest, IAlertRepository repo)
+{
+    var result = repo.UpdateAlert(httpRequest);
+    return Results.Ok();
+
+
+}
+
 IResult Upload(HttpRequest httpRequest, IAlertRepository repo)
 {
 
@@ -122,8 +171,3 @@ IResult Upload(HttpRequest httpRequest, IAlertRepository repo)
 }
 
 app.Run();
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

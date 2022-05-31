@@ -1,5 +1,6 @@
 ﻿using NetTrackAPI.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace NetTrackAPI.ViewModels
@@ -51,5 +52,8 @@ namespace NetTrackAPI.ViewModels
 
         [Required]
         public List<Contact> contacts { get; set; }
+
+        [NotMapped]
+        public List<Contact> protectees { get; set; }
     }
 }

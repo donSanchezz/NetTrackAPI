@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace NetTrackAPI.Models
 {
@@ -25,10 +26,16 @@ namespace NetTrackAPI.Models
         [JsonPropertyName("primary")]
         public bool Primary { get; set; }
 
-        [JsonIgnore]
+        
         public string UserId { get; set; }
 
         [JsonIgnore]
         public User User { get; set; }
-    }
+
+        [NotMapped]
+        public bool Active { get; set; }
+        
+        [NotMapped]
+        public List<string> images { get; set; } = new List<string>();
+     }
 }

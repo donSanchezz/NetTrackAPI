@@ -71,20 +71,29 @@ namespace NetTrackAPI.Repositories.Alert
 
         public Task Start(HttpRequest request)
         {
+
             var values = request.ReadFormAsync().Result;
             Models.Alert alert =
                 System.Text.Json.JsonSerializer.Deserialize<Models.Alert>(values.Keys.FirstOrDefault());
 
 
+            var Dbalert = _context.Alert.Where(x => x.UserId == alert.UserId && x.status == true).FirstOrDefault();
+
+            if(Dbalert != null)
+            {
+
+                _context.Alert.Remove(Dbalert);
+                _context.SaveChanges();
+            }
             alert.status = true;
             var createdAlert = _context.Alert.Add(alert);
             _context.SaveChanges();
             var user = _userManager.FindByIdAsync(alert.UserId).Result;
 
-         
+
             // Find your Account SID and Auth Token at twilio.com/console
             // and set the environment variables. See http://twil.io/secure
-          
+
             string accountSid = _configuration["Twilio:AccountSid"];
             string authToken = _configuration["Twilio:AuthToken"];
             var contacts = _context.Contact.Where(x => x.UserId == alert.UserId).ToList();
@@ -98,13 +107,55 @@ namespace NetTrackAPI.Repositories.Alert
                 var message = MessageResource.Create(
                     body: "An alert has been triggered for " + user.FirstName + " " + user.LastName + ", please visit the NetTrack application to view the alert and start tracking.",
                     from: new Twilio.Types.PhoneNumber(from),
-                    to: new Twilio.Types.PhoneNumber($"+"+contact.Phone.ToString())
+                    to: new Twilio.Types.PhoneNumber($"+" + contact.Phone.ToString())
                 );
             }
-            
-
             return Task.CompletedTask;
 
+        }
+
+
+        
+        public Task<Models.Alert> GetAlert(string userId)
+        {
+           var alert = _context.Alert.Where(x => x.UserId == userId && x.status == true).FirstOrDefault();
+
+            return Task.FromResult(alert);
+        }
+
+        public Task StopAlert(HttpRequest request)
+        {
+            var values = request.ReadFormAsync().Result;
+            Models.Alert alert =
+                System.Text.Json.JsonSerializer.Deserialize<Models.Alert>(values.Keys.FirstOrDefault());
+            
+            var dbAlert = _context.Alert.Where(x => x.UserId == alert.UserId && x.status == true).FirstOrDefault();
+
+            _context.Alert.Remove(dbAlert);
+            _context.SaveChanges();
+
+            return Task.FromResult(alert);
+        }
+
+        public Task UpdateAlert(HttpRequest request)
+        {
+            var values = request.ReadFormAsync().Result;
+            Models.Alert alert =
+                System.Text.Json.JsonSerializer.Deserialize<Models.Alert>(values.Keys.FirstOrDefault());
+
+
+            var updateAlert = _context.Alert.Where(x => x.UserId == alert.UserId && x.status == true).FirstOrDefault();
+            if(updateAlert != null)
+            {
+                updateAlert.Latitude = alert.Latitude;
+                updateAlert.Longitude = alert.Longitude;
+
+                _context.Alert.Update(updateAlert);
+                _context.SaveChanges();
+            }
+           
+
+            return Task.CompletedTask;
         }
     }
 }
